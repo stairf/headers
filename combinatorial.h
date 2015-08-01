@@ -38,6 +38,12 @@
  *     bar(array, len);
  * }
  *
+ * for each_permutation(array, len) {
+ *     baz(array, len);
+ * }
+ *
+ * === each_combination and each_subset ===
+ *
  * These loops generate all number combinations of length _LENGTH, in the array
  * starting at _PTR, using a range from _MIN (included) to _MAX (excluded).
  * The each_subset macro restricts the array values such that each number
@@ -54,15 +60,37 @@
  * all possible number combinations exactly once. When _LENGTH is zero, then
  * the loop body is executed exactly once for both macros, and the array is not
  * initialized. This loop iteration corresponds to the empty list, or the empty
- * set.
+ * set. After the last iteration, all array entries are reset to their initial
+ * values.
  *
- * You can use the break and continue keywords inside the loop body.
+ * You can use the break and continue keywords inside the loop body. However,
+ * the array is not reset to its initial value when the break keyword
+ * terminates the loop.
  *
  * Both macros are type-generic, as long as the type supports addition and
  * subtraction. In C, integers and non-void pointer types can be used. In C++,
  * the data type must support comparison, addition and subtraction, and
  * increment and decrement operators. The _PTR argument must be a pointer to
  * the first element of a non-const array of that type.
+ *
+ * All macro parameters must not have side effects, and must remain unchanged
+ * at all loop iterations. The loop body must not modify the array data.
+ *
+ * === each_permutation ===
+ *
+ * The macro generates all possible permutations of the given array, starting
+ * at _PTR with the length _LENGTH. The array must be initialized before. Each
+ * array entry must be unique.
+ *
+ * At each loop iteration, the array contains a permutation of the initial
+ * array. The loop body is executed once for each possible permutation. When
+ * _LENGTH is zero, then the loop body is executed exactly once, because the
+ * empty set has exactly one possible permutation (which is the empty set).
+ *
+ * You can use the break and continue keywords inside the loop body.
+ *
+ * This macro is type-generic for all types in C and C++. The memcpy function
+ * is used to swap array elements.
  *
  * All macro parameters must not have side effects, and must remain unchanged
  * at all loop iterations. The loop body must not modify the array data.
@@ -73,10 +101,14 @@
 // need size_t
 #ifdef __cplusplus
 #  include <cstddef>
-#  define ___COMBINATORIAL__SIZE__TYPE std::size_t
+#  include <cstring>
+#  define ___COMBINATORIAL__SIZE__TYPE   std::size_t
+#  define ___COMBINATORIAL__MEMCPY__FUNC std::memcpy
 #else
 #  include <stddef.h>
-#  define ___COMBINATORIAL__SIZE__TYPE size_t
+#  include <string.h>
+#  define ___COMBINATORIAL__SIZE__TYPE   size_t
+#  define ___COMBINATORIAL__MEMCPY__FUNC memcpy
 #endif
 
 #define each_combination(_PTR, _MIN, _MAX, _LENGTH) \
@@ -120,6 +152,36 @@
 				_++; \
 				if (_ < (_LENGTH) && (_PTR)[_] > (_PTR)[_-1]) \
 					(_PTR)[_] = (_PTR)[_-1]; \
+				_++; \
+			} \
+		} else
+
+#define each_permutation(_PTR, _LENGTH) \
+	(___COMBINATORIAL__SIZE__TYPE _, __, ___[(_LENGTH)], ____[(sizeof(*(_PTR)) * (_LENGTH) + (sizeof(___COMBINATORIAL__SIZE__TYPE) - 1)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____ = 0;; --_) \
+		if (!_____) { \
+			___COMBINATORIAL__MEMCPY__FUNC(____, (_PTR), sizeof(*(_PTR)) * (_LENGTH)); \
+			for (_ = 0; _ < (_LENGTH); ++_) \
+				___[_] = (_LENGTH); \
+			_ = _____ = 1; \
+		} else if (!(_LENGTH) && _) { \
+			break; \
+		} else if (_ < (_LENGTH)) { \
+			if (!___[_]) { \
+				___[_] = (_LENGTH); \
+				if (_) \
+					continue; \
+				else \
+					break; \
+			} else { \
+				___[_]--; \
+				for (__ = 0; __ < _ && ___[__] != ___[_]; ++__); \
+				if (__ == _) { \
+					_++; \
+					if (_ == (_LENGTH)) { \
+						for (__ = 0; __ < _; ++__) \
+							___COMBINATORIAL__MEMCPY__FUNC((_PTR) + __, ((char*)____) + (sizeof(*(_PTR)) * (___[__])), sizeof(*(_PTR))); \
+					} \
+				} \
 				_++; \
 			} \
 		} else
