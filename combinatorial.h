@@ -35,24 +35,32 @@
  *     foo(array, len);
  *
  * for each_subset(array, min, max, len) {
- *     bar(array, len);
+ *     foo(array, len);
  * }
+ *
+ * for each_ordered_subset(array, min, max, len)
+ *     foo(array, len);
  *
  * for each_permutation(array, len) {
- *     baz(array, len);
+ *     foo(array, len);
  * }
  *
- * === each_combination and each_subset ===
+ * === each_combination, each_ordered_subset, each_subset ===
  *
  * These loops generate all number combinations of length _LENGTH, in the array
  * starting at _PTR, using a range from _MIN (included) to _MAX (excluded).
- * The each_subset macro restricts the array values such that each number
- * appears at most once, and the order of the numbers in the array does not
- * matter.
+ *
+ * Macro                Repetition  Ordered
+ * -------------------  ----------  -------
+ * each_combination     Y           Y
+ * each_ordered_subset  N           Y
+ * each_subset          N           N
+ * -------------------  ----------  -------
  *
  * Examples:
  *  - each_combination(out,1,3,2) generates all values of {1,1}, {1,2}, {2,1},
  *    and {2,2}, in any order
+ *  - each_ordered_subset(out,1,3,2) generates both {1,2} and {2,1}
  *  - each_subset(out,1,3,2) genereates either {1,2} or {2,1}
  *
  * The loop body is invoked repeatedly, with the number set stored in the given
@@ -152,6 +160,30 @@
 				_++; \
 				if (_ < (_LENGTH) && (_PTR)[_] > (_PTR)[_-1]) \
 					(_PTR)[_] = (_PTR)[_-1]; \
+				_++; \
+			} \
+		} else
+
+#define each_ordered_subset(_PTR, _MIN, _MAX, _LENGTH) \
+	(___COMBINATORIAL__SIZE__TYPE _, __,  ___ = 0;; --_) \
+		if (!___) { \
+			for (_ = 0; _ < (_LENGTH); ++_) \
+				(_PTR)[_] = (_MAX); \
+			_ = ___ = 1; \
+		} else if (!(_LENGTH) && _) { \
+			break; \
+		} else if (_ < (_LENGTH)) { \
+			if ((_PTR)[_] <= (_MIN)) { \
+				(_PTR)[_] = (_MAX); \
+				if (_) \
+					continue; \
+				else \
+					break; \
+			} else { \
+				(_PTR)[_]--; \
+				for (__ = 0; __ < _ && (_PTR)[__] != (_PTR)[_]; ++__); \
+				if (__ == _) \
+					_++; \
 				_++; \
 			} \
 		} else
