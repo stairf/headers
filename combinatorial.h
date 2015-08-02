@@ -71,9 +71,7 @@
  * set. After the last iteration, all array entries are reset to their initial
  * values.
  *
- * You can use the break and continue keywords inside the loop body. However,
- * the array is not reset to its initial value when the break keyword
- * terminates the loop.
+ * You can use the break and continue keywords inside the loop body.
  *
  * Both macros are type-generic, as long as the type supports addition and
  * subtraction. In C, integers and non-void pointer types can be used. In C++,
@@ -95,7 +93,9 @@
  * _LENGTH is zero, then the loop body is executed exactly once, because the
  * empty set has exactly one possible permutation (which is the empty set).
  *
- * You can use the break and continue keywords inside the loop body.
+ * You can use the break and continue keywords inside the loop body. However,
+ * the array is not reset to its initial value when the break keyword
+ * terminates the loop.
  *
  * This macro is type-generic for all types in C and C++. The memcpy function
  * is used to swap array elements.
