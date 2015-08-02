@@ -220,7 +220,7 @@
 		} else
 
 #define each_permutation(_PTR, _LENGTH) \
-	(___COMBINATORIAL__SIZE__TYPE _, __, ___[(_LENGTH)], ____[(sizeof(*(_PTR)) * (_LENGTH) + (sizeof(___COMBINATORIAL__SIZE__TYPE) - 1)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____ = 0;; --_) \
+	(___COMBINATORIAL__SIZE__TYPE _, __, ___[(_LENGTH)?(_LENGTH):1], ____[1+(sizeof(*(_PTR)) * (_LENGTH)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____ = 0;; --_) \
 		if (!_____) { \
 			___COMBINATORIAL__MEMCPY__FUNC(____, (_PTR), sizeof(*(_PTR)) * (_LENGTH)); \
 			for (_ = 0; _ < (_LENGTH); ++_) \
@@ -239,11 +239,8 @@
 				___[_]--; \
 				for (__ = 0; __ < _ && ___[__] != ___[_]; ++__); \
 				if (__ == _) { \
+					___COMBINATORIAL__MEMCPY__FUNC((_PTR) + __, ((char*)____) + (sizeof(*(_PTR)) * (___[__])), sizeof(*(_PTR))); \
 					_++; \
-					if (_ == (_LENGTH)) { \
-						for (__ = 0; __ < _; ++__) \
-							___COMBINATORIAL__MEMCPY__FUNC((_PTR) + __, ((char*)____) + (sizeof(*(_PTR)) * (___[__])), sizeof(*(_PTR))); \
-					} \
 				} \
 				_++; \
 			} \
