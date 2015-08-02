@@ -127,7 +127,7 @@
 #endif
 
 #define each_combination(_PTR, _MIN, _MAX, _LENGTH) \
-	(___COMBINATORIAL__SIZE__TYPE _, __ = 0;; --_) \
+	(___COMBINATORIAL__SIZE__TYPE _ = 0, __ = 0;; --_) \
 		if (!__) { \
 			for (_ = 0; _ < (_LENGTH); ++_) \
 				(_PTR)[_] = (_MAX); \
@@ -148,7 +148,7 @@
 		} else
 
 #define each_multiset(_PTR, _MIN, _MAX, _LENGTH) \
-	(___COMBINATORIAL__SIZE__TYPE _, __ = 0;; --_) \
+	(___COMBINATORIAL__SIZE__TYPE _ = 0, __ = 0;; --_) \
 		if (!__) { \
 			for (_ = 0; _ < (_LENGTH); ++_) \
 				(_PTR)[_] = (_MAX); \
@@ -172,7 +172,7 @@
 		} else
 
 #define each_subset(_PTR, _MIN, _MAX, _LENGTH) \
-	(___COMBINATORIAL__SIZE__TYPE _, __ = 0;; --_) \
+	(___COMBINATORIAL__SIZE__TYPE _ = 0, __ = 0;; --_) \
 		if (!__) { \
 			for (_ = 0; _ < (_LENGTH); ++_) \
 				(_PTR)[_] = (_MAX); \
@@ -196,7 +196,7 @@
 		} else
 
 #define each_ordered_subset(_PTR, _MIN, _MAX, _LENGTH) \
-	(___COMBINATORIAL__SIZE__TYPE _, __,  ___ = 0;; --_) \
+	(___COMBINATORIAL__SIZE__TYPE _ = 0, __,  ___ = 0;; --_) \
 		if (!___) { \
 			for (_ = 0; _ < (_LENGTH); ++_) \
 				(_PTR)[_] = (_MAX); \
@@ -220,7 +220,7 @@
 		} else
 
 #define each_permutation(_PTR, _LENGTH) \
-	(___COMBINATORIAL__SIZE__TYPE _, __, ___[(_LENGTH)?(_LENGTH):1], ____[1+(sizeof(*(_PTR)) * (_LENGTH)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____ = 0;; --_) \
+	(___COMBINATORIAL__SIZE__TYPE _ = 0, __, ___[(_LENGTH)?(_LENGTH):1], ____[1+(sizeof(*(_PTR)) * (_LENGTH)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____ = 0;; --_) \
 		if (!_____) { \
 			___COMBINATORIAL__MEMCPY__FUNC(____, (_PTR), sizeof(*(_PTR)) * (_LENGTH)); \
 			for (_ = 0; _ < (_LENGTH); ++_) \
