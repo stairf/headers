@@ -31,24 +31,32 @@
  * This file defines macros to iterate over number sets and permutations. The
  * usage resembles a for loop:
  *
+ * TYPE array[len];
  * for each_combination(array, min, max, len)
  *     foo(array, len);
  *
+ * TYPE array[len];
  * for each_subset(array, min, max, len) {
  *     foo(array, len);
  * }
  *
+ * TYPE array[len];
  * for each_ordered_subset(array, min, max, len)
  *     foo(array, len);
  *
+ * TYPE array[len];
  * for each_multiset(array, min, max, len) {
  *     foo(array, len);
  * }
  *
+ * TYPE array[len];
+ * initialize(array, len);
  * for each_simple_permutation(array, len) {
  *     foo(array, len);
  * }
  *
+ * TYPE array[len];
+ * initialize(array, len);
  * for each_permutation(array, len)
  *     foo(array, len);
  *
