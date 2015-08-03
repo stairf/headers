@@ -28,8 +28,8 @@
 /*
  * combinatorial.h
  *
- * This file defines macros to iterate over number sets. The usage resembles a
- * for loop:
+ * This file defines macros to iterate over number sets and permutations. The
+ * usage resembles a for loop:
  *
  * for each_combination(array, min, max, len)
  *     foo(array, len);
@@ -45,9 +45,13 @@
  *     foo(array, len);
  * }
  *
- * for each_permutation(array, len) {
+ * for each_simple_permutation(array, len) {
  *     foo(array, len);
  * }
+ *
+ * for each_permutation(array, len)
+ *     foo(array, len);
+ *
  *
  * === each_combination, each_multiset, each_ordered_subset, each_subset ===
  *
@@ -89,23 +93,28 @@
  * All macro parameters must not have side effects, and must remain unchanged
  * at all loop iterations. The loop body must not modify the array data.
  *
- * === each_permutation ===
+ * === each_simple_permutation, each_permutation ===
  *
- * The macro generates all possible permutations of the given array, starting
- * at _PTR with the length _LENGTH. The array must be initialized before. Each
- * array entry must be unique.
+ * These macros generate all possible permutations of the given array, starting
+ * at _PTR with the length _LENGTH. The array must be initialized before. The
+ * each_simple_permutation macro assumes that each array entry is unique. In
+ * contrast, the each_permutation macro automatically detects equal array
+ * elements using the `==' operator.
  *
  * At each loop iteration, the array contains a permutation of the initial
  * array. The loop body is executed once for each possible permutation. When
  * _LENGTH is zero, then the loop body is executed exactly once, because the
  * empty set has exactly one possible permutation (which is the empty set).
+ * When the loop terminates, the array is reset to its initial permutation.
  *
  * You can use the break and continue keywords inside the loop body. However,
  * the array is not reset to its initial value when the break keyword
  * terminates the loop.
  *
- * This macro is type-generic for all types in C and C++. The memcpy function
- * is used to swap array elements.
+ * Both permutation generation macros are generic for all types in C and C++.
+ * The only limitation is that, for the each_permutation macro, the array
+ * element type has to supports the `==' operator. The memcpy function is used
+ * to swap array elements.
  *
  * All macro parameters must not have side effects, and must remain unchanged
  * at all loop iterations. The loop body must not modify the array data.
@@ -219,7 +228,7 @@
 			} \
 		} else
 
-#define each_permutation(_PTR, _LENGTH) \
+#define each_simple_permutation(_PTR, _LENGTH) \
 	(___COMBINATORIAL__SIZE__TYPE _ = 0, __, ___[(_LENGTH)?(_LENGTH):1], ____[1+(sizeof(*(_PTR)) * (_LENGTH)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____ = 0;; --_) \
 		if (!_____) { \
 			___COMBINATORIAL__MEMCPY__FUNC(____, (_PTR), sizeof(*(_PTR)) * (_LENGTH)); \
@@ -238,6 +247,36 @@
 			} else { \
 				___[_]--; \
 				for (__ = 0; __ < _ && ___[__] != ___[_]; ++__); \
+				if (__ == _) { \
+					___COMBINATORIAL__MEMCPY__FUNC((_PTR) + __, ((char*)____) + (sizeof(*(_PTR)) * (___[__])), sizeof(*(_PTR))); \
+					_++; \
+				} \
+				_++; \
+			} \
+		} else
+
+#define each_permutation(_PTR, _LENGTH) \
+	(___COMBINATORIAL__SIZE__TYPE _ = 0, __, ___[(_LENGTH)?(_LENGTH):1], ____[1+(sizeof(*(_PTR)) * (_LENGTH)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____[(_LENGTH) ? (_LENGTH) : 1], ______ = 0;; --_) \
+		if (!______) { \
+			___COMBINATORIAL__MEMCPY__FUNC(____, (_PTR), sizeof(*(_PTR)) * (_LENGTH)); \
+			for (_ = 0; _ < (_LENGTH); ++_) {\
+				for (__ = 0; __ < _ && !((_PTR)[_] == (_PTR)[__]); ++__); \
+				_____[_] = __; \
+				___[_] = (_LENGTH); \
+			} \
+			_ = ______ = 1; \
+		} else if (!(_LENGTH) && _) { \
+			break; \
+		} else if (_ < (_LENGTH)) { \
+			if (!___[_]) { \
+				___[_] = (_LENGTH); \
+				if (_) \
+					continue; \
+				else \
+					break; \
+			} else { \
+				___[_]--; \
+				for (__ = 0; __ < _ && (_____[___[_]] != _____[___[__]] || ___[__] < ___[_]); ++__); \
 				if (__ == _) { \
 					___COMBINATORIAL__MEMCPY__FUNC((_PTR) + __, ((char*)____) + (sizeof(*(_PTR)) * (___[__])), sizeof(*(_PTR))); \
 					_++; \
