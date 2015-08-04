@@ -237,11 +237,12 @@
 		} else
 
 #define each_simple_permutation(_PTR, _LENGTH) \
-	(___COMBINATORIAL__SIZE__TYPE _ = 0, __, ___[(_LENGTH)?(_LENGTH):1], ____[1+(sizeof(*(_PTR)) * (_LENGTH)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____ = 0;; --_) \
+	(___COMBINATORIAL__SIZE__TYPE _ = 0, __, ___[(_LENGTH) ? (_LENGTH) : 1], ____[1 + (sizeof((_PTR)[0]) * (_LENGTH)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____ = 0;; --_) \
 		if (!_____) { \
-			___COMBINATORIAL__MEMCPY__FUNC(____, (_PTR), sizeof(*(_PTR)) * (_LENGTH)); \
-			for (_ = 0; _ < (_LENGTH); ++_) \
+			for (_ = 0; _ < (_LENGTH); ++_) { \
 				___[_] = (_LENGTH); \
+				___COMBINATORIAL__MEMCPY__FUNC(((char*)____) + (sizeof((_PTR)[0]) * _), &(_PTR)[_], sizeof((_PTR)[0])); \
+			} \
 			_ = _____ = 1; \
 		} else if (!(_LENGTH) && _) { \
 			break; \
@@ -256,7 +257,7 @@
 				___[_]--; \
 				for (__ = 0; __ < _ && ___[__] != ___[_]; ++__); \
 				if (__ == _) { \
-					___COMBINATORIAL__MEMCPY__FUNC((_PTR) + __, ((char*)____) + (sizeof(*(_PTR)) * (___[__])), sizeof(*(_PTR))); \
+					___COMBINATORIAL__MEMCPY__FUNC((_PTR) + __, ((char*)____) + (sizeof((_PTR)[0]) * (___[__])), sizeof((_PTR)[0])); \
 					_++; \
 				} \
 				_++; \
@@ -264,13 +265,13 @@
 		} else
 
 #define each_permutation(_PTR, _LENGTH) \
-	(___COMBINATORIAL__SIZE__TYPE _ = 0, __, ___[(_LENGTH)?(_LENGTH):1], ____[1+(sizeof(*(_PTR)) * (_LENGTH)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____[(_LENGTH) ? (_LENGTH) : 1], ______ = 0;; --_) \
+	(___COMBINATORIAL__SIZE__TYPE _ = 0, __, ___[(_LENGTH) ? (_LENGTH) : 1], ____[1 + (sizeof((_PTR)[0]) * (_LENGTH)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____[(_LENGTH) ? (_LENGTH) : 1], ______ = 0;; --_) \
 		if (!______) { \
-			___COMBINATORIAL__MEMCPY__FUNC(____, (_PTR), sizeof(*(_PTR)) * (_LENGTH)); \
 			for (_ = 0; _ < (_LENGTH); ++_) {\
 				for (__ = 0; __ < _ && !((_PTR)[_] == (_PTR)[__]); ++__); \
 				_____[_] = __; \
 				___[_] = (_LENGTH); \
+				___COMBINATORIAL__MEMCPY__FUNC(((char*)____) + (sizeof((_PTR)[0]) * _), &(_PTR)[_], sizeof((_PTR)[0])); \
 			} \
 			_ = ______ = 1; \
 		} else if (!(_LENGTH) && _) { \
@@ -286,7 +287,7 @@
 				___[_]--; \
 				for (__ = 0; __ < _ && (_____[___[_]] != _____[___[__]] || ___[__] < ___[_]); ++__); \
 				if (__ == _) { \
-					___COMBINATORIAL__MEMCPY__FUNC((_PTR) + __, ((char*)____) + (sizeof(*(_PTR)) * (___[__])), sizeof(*(_PTR))); \
+					___COMBINATORIAL__MEMCPY__FUNC(&(_PTR)[__], ((char*)____) + (sizeof((_PTR)[0]) * (___[__])), sizeof((_PTR)[0])); \
 					_++; \
 				} \
 				_++; \
