@@ -289,6 +289,9 @@
 				if (__ == _) { \
 					___COMBINATORIAL__MEMCPY__FUNC(&(_PTR)[__], ((char*)____) + (sizeof((_PTR)[0]) * (___[__])), sizeof((_PTR)[0])); \
 					_++; \
+				} else if (___[__] > ___[_]) { \
+					while (_ > __) \
+						___[_--] = (_LENGTH); \
 				} \
 				_++; \
 			} \
