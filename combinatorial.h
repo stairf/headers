@@ -113,11 +113,13 @@
  * array. The loop body is executed once for each possible permutation. When
  * _LENGTH is zero, then the loop body is executed exactly once, because the
  * empty set has exactly one possible permutation (which is the empty set).
- * When the loop terminates, the array is reset to its initial permutation.
+ * When the each_permutation loop terminates, the array is reset to its initial
+ * permutation. In contrast, the each_simple_permutation can leave the array in
+ * any permutation.
  *
  * You can use the break and continue keywords inside the loop body. However,
  * the array is not reset to its initial value when the break keyword
- * terminates the loop.
+ * terminates an each_permutation loop.
  *
  * Both permutation generation macros are generic for all types in C and C++.
  * The only limitation is that, for the each_permutation macro, the array
@@ -237,32 +239,27 @@
 		} else
 
 #define each_simple_permutation(_PTR, _LENGTH) \
-	(___COMBINATORIAL__SIZE__TYPE _ = 0, __, ___[(_LENGTH) ? (_LENGTH) : 1], ____[1 + (sizeof((_PTR)[0]) * (_LENGTH)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____ = 0;; --_) \
+	(___COMBINATORIAL__SIZE__TYPE _ = 0, __[(_LENGTH) ? (_LENGTH) : 1], ___, ____[1 + sizeof((_PTR)[0]) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____ = 0;;) \
 		if (!_____) { \
-			for (_ = 0; _ < (_LENGTH); ++_) { \
-				___[_] = (_LENGTH); \
-				___COMBINATORIAL__MEMCPY__FUNC(((char*)____) + (sizeof((_PTR)[0]) * _), &(_PTR)[_], sizeof((_PTR)[0])); \
-			} \
-			_ = _____ = 1; \
-		} else if (!(_LENGTH) && _) { \
+			__[0] = 0; \
+			_____ = 1; \
+		} else if (!(_LENGTH) && __[_]) { \
 			break; \
-		} else if (_ < (_LENGTH)) { \
-			if (!___[_]) { \
-				___[_] = (_LENGTH); \
-				if (_) \
-					continue; \
-				else \
-					break; \
-			} else { \
-				___[_]--; \
-				for (__ = 0; __ < _ && ___[__] != ___[_]; ++__); \
-				if (__ == _) { \
-					___COMBINATORIAL__MEMCPY__FUNC((_PTR) + __, ((char*)____) + (sizeof((_PTR)[0]) * (___[__])), sizeof((_PTR)[0])); \
-					_++; \
-				} \
-				_++; \
+		} else if (((_LENGTH) - _) >= 2 && __[_] < ((_LENGTH) - _)) { \
+			_++; \
+			__[_] = 0; \
+		} else if ((_LENGTH) && __[_] >= ((_LENGTH) - _)) { \
+			if (!_) \
+				break; \
+			_--; \
+			if (__[_] < ((_LENGTH) - _ - 1)) { \
+				___ = (((_LENGTH) - _) % 2) ? 0 : __[_]; \
+				___COMBINATORIAL__MEMCPY__FUNC(____, &(_PTR)[(_LENGTH) - _ - 1], sizeof((_PTR)[0])); \
+				___COMBINATORIAL__MEMCPY__FUNC(&(_PTR)[(_LENGTH) - _ - 1], &(_PTR)[___], sizeof((_PTR)[0])); \
+				___COMBINATORIAL__MEMCPY__FUNC(&(_PTR)[___], ____, sizeof((_PTR)[0])); \
 			} \
-		} else
+			__[_]++; \
+		} else if (((__[_] = (_LENGTH) - _ + 1)) && 0) {} else
 
 #define each_permutation(_PTR, _LENGTH) \
 	(___COMBINATORIAL__SIZE__TYPE _ = 0, __, ___[(_LENGTH) ? (_LENGTH) : 1], ____[1 + (sizeof((_PTR)[0]) * (_LENGTH)) / sizeof(___COMBINATORIAL__SIZE__TYPE)], _____[(_LENGTH) ? (_LENGTH) : 1], ______ = 0;; --_) \
